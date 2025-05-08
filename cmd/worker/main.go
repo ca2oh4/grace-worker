@@ -3,10 +3,10 @@ package main
 import (
 	"log"
 
-	"grace-worker/internal"
+	"grace-worker/pkg/runtime"
 )
 
 func main() {
-	internal.Grace()
+	runtime.Grace()
 	log.Println("Shutdown Worker ...")
 }
