@@ -8,10 +8,25 @@ import (
 	"os/signal"
 	"time"
 
+	"grace-worker/internal/web/config"
+
+	"grace-worker/pkg/database"
+	"grace-worker/pkg/redis"
+
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	if err := config.Setup(); err != nil {
+		log.Fatalln(err)
+	}
+	if err := database.Setup(config.Database.ToDatabaseOption()); err != nil {
+		log.Fatalln(err)
+	}
+	if err := redis.Setup(config.Redis.ToRedisOptions()); err != nil {
+		log.Fatalln(err)
+	}
+
 	router := gin.Default()
 	router.GET("/", func(c *gin.Context) {
 		time.Sleep(5 * time.Second)
@@ -19,7 +34,7 @@ func main() {
 	})
 
 	srv := &http.Server{
-		Addr:    ":8080",
+		Addr:    config.Server.ToAddr(),
 		Handler: router,
 	}
 
